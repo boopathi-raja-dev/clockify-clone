@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, "A-bpple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -75,6 +75,7 @@ body {
 }
 
 .show {
+
     display: block;
 }
 
@@ -794,15 +795,24 @@ display: flex;
 
 .duplicate-btn{
   font-size: 16px;
-  display: block;
+  color: #7d8388;
+  padding-top: 20px;
+  padding-left: 30px;
+  list-style: none;
 }
-.remove-btn{
+.delete-btn{
   font-size: 16px;
   color: red;
-  display: block;
+  padding-left: 30px;
+  padding-bottom: 16px;
+  list-style: none;
+  padding-top: 10px;
 }
-.duplicate-btn:hover,.remove-btn:hover{
+.duplicate-btn:hover,.delete-btn:hover{
   background-color: #E4EAEE;
+}
+.duplicate-btn:hover{
+  color: #423639;
 }
 #dateInput{
   cursor: pointer;
@@ -837,3 +847,28 @@ display: flex;
   text-decoration: none;
   text-align: left;
 }
+
+.dropdown_functions{
+  border: none;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.drop_shown{
+  position: relative;
+}
+
+.dropdown_content{
+  position: absolute;
+  right: 0;
+  top: 20px;
+  width: 140px;
+  height: 94px;
+  display: none;
+  border: 1px black;
+  background-color: white;
+}
+.showing{
+  display: block;
+}
+
