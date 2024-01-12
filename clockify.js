@@ -139,7 +139,6 @@ function onclick_calender(event, i, j) {
 }
 
 const removeTask = (i, j) => {
-    console.log(week_changer, i, j)
     if (week_changer[i]["tasks"].length === 1) {
         week_changer.splice(i, 1);
     }
@@ -370,7 +369,6 @@ stop_btn.addEventListener('click', function onclick() {
     clearInterval(time_start);
     week_total_time = addTimes(week_total_time, store_timer);
     timer_week.textContent = week_total_time;
-    console.log(timer_week);
 });
 
 
@@ -466,7 +464,6 @@ function addTimes(startTime, endTime) {
     for (var i = 0; i < max; i++) {
         times[i] = a[i] + b[i]
     }
-    debugger;
     var hours = times[0]
     var minutes = times[1]
     var seconds = times[2]
@@ -490,7 +487,6 @@ function add_remove() {
 //format date
 let count = 0;
 function formatDate(inputDate) {
-    console.log(inputDate)
     const dateParts = inputDate.split('-'); // Split the input date string
     const year = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
