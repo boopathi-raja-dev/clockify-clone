@@ -138,19 +138,23 @@ function onclick_calender(event, i, j) {
     newTaskPlaceholder = { "from": "", "to": "", "title": "", "elapsed": "" }
 }
 
-const removeTask = (i, j)=>{
-    if(week_changer[i]["tasks"].length === 1){
-        week_changer.splice(i,1);
+const removeTask = (i, j) => {
+    if (week_changer[i]["tasks"].length === 1) {
+        week_changer.splice(i, 1);
     }
-    else{
+    else {
         week_changer[i]["tasks"].splice(j, 1);
     }
-}   
-
-// duplicate the task
-const duplicateTask = (i, j)=>{
-    week_changer[i]["tasks"] = [...week_changer[i]["tasks"], week_changer[i]["tasks"][i]]
+    initialBuildTask();
 }
+
+function duplicateTask(i, j) {
+    var clonedTask = { ...week_changer[i]["tasks"][j] };
+    week_changer[i]["tasks"].push(clonedTask);
+    initialBuildTask();
+   
+}
+
 const totalTask = document.querySelector('.total_task');
 function buildTaskTile(week_changer, j, header, i) {
     let taskTile;
@@ -159,8 +163,7 @@ function buildTaskTile(week_changer, j, header, i) {
       ${header}
     <div class="main-content-storer">
         <div class="project-adder-storer">
-            <input class="project-text-input-box" type="text" placeholder="Add description" value="${week_changer["title"]}"  />
-            <div class="add-project-button-new">
+        <input class="project-text-input-box" type="text" placeholder="Add description" value="${week_changer["title"]}" onchange="onInputChange(event, ${i}, ${j})" />            <div class="add-project-button-new">
                 <img src="https://app.clockify.me/assets/ui-icons/plus-blue.svg" />
                 <span class="hover_project">Project</span>
             </div>
@@ -176,24 +179,24 @@ function buildTaskTile(week_changer, j, header, i) {
             <input type="date" id="dateInput" value=" " onchange="onclick_calender(event, ${i}, ${j})"/> 
             <div class="timer-changes">${week_changer["elapsed"]}</div>
             <div><img src="https://app.clockify.me/assets/ui-icons/play.svg" alt="" class="play-btn"></div>
-            <div class="dot-total"> <button onclick="add_remove()" class="remove_btn"><img src="https://app.clockify.me/assets/ui-icons/menu-dots-vertical.svg" alt="" class="menu-icon" ></button>
-            <div class="dropdown-content-add" id="myDropdown_add">
-            <div onclick="removeTask(i,j)">WORKSPACES </div>
-            <div onclick="removeTask(i,j)">Boopathi Raja's </div>
-        </div>
-        </div>
+            <div class="drop_shown">
+            <button class="dropdown_functions" onclick="show_buttons(${i}, ${j})">
+            <img src="https://app.clockify.me/assets/ui-icons/menu-dots-vertical.svg" alt="">
+        </button>
 
-      
-</div>
-        </div>`
+        <div class="dropdown_content" id="dropdown_${i}_${j}">
+            <li class="duplicate-btn" onclick="duplicateTask(${i},${j})">Duplicate</li>
+            <li class="delete-btn" onclick="removeTask(${i},${j})">Delete</li>
+        </div>
+    </div>
+</div>`
 
 
     else
         taskTile = `
     <div class="main-content-storer">
         <div class="project-adder-storer">
-            <input class="project-text-input-box" type="text" placeholder="Add description" value="${week_changer["title"]}"/>
-            <div class="add-project-button-new">
+        <input class="project-text-input-box" type="text" placeholder="Add description" value="${week_changer["title"]}" onchange="onInputChange(event, ${i}, ${j})" />            <div class="add-project-button-new">
                 <img src="https://app.clockify.me/assets/ui-icons/plus-blue.svg" />
                 <span class="hover_project">Project</span>
             </div>
@@ -209,16 +212,17 @@ function buildTaskTile(week_changer, j, header, i) {
             <input  type="date" id="dateInput" value=" " onchange="onclick_calender(event, ${i}, ${j})"> 
             <div class="timer-changes">${week_changer["elapsed"]}</div>
             <div><img src="https://app.clockify.me/assets/ui-icons/play.svg" alt="" class="play-btn"></div>
-            <div class="dot-total"> <button onclick="add_remove()" class="remove_btn"><img src="https://app.clockify.me/assets/ui-icons/menu-dots-vertical.svg" alt="" class="menu-icon" ></button>
-            <div class="dropdown-content-add" id="myDropdown_add">
-            <a >WORKSPACES </a>
-            <a >Boopathi Raja's </a>
-        </div>
-        </div>
+            <div class="drop_shown">
+            <button class="dropdown_functions" onclick="show_buttons(${i}, ${j})">
+            <img src="https://app.clockify.me/assets/ui-icons/menu-dots-vertical.svg" alt="">
+        </button>
 
-      
-</div>
-        </div>`
+        <div class="dropdown_content" id="dropdown_${i}_${j}">
+            <li class="duplicate-btn" onclick="duplicateTask(${i},${j})">Duplicate</li>
+            <li class="delete-btn" onclick="removeTask(${i},${j})">Delete</li>
+        </div>
+    </div>
+</div>`
 
     var parser = new DOMParser();
     var doc = parser.parseFromString(taskTile, 'text/html');
@@ -248,35 +252,49 @@ function secondsToHMS(seconds) {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-function initialBuildTask() {
 
+function initialBuildTask() {
     totalTask.innerHTML = "";
+    week_total_time = "00:00:00"; // Reset week total time
+
     for (i = 0; i < week_changer.length; i++) {
         timeElased = 0;
-        let flex_end_te = document.querySelectorAll('.flex_end_te');
         let header = `
             <div class="task-adder">
                 <div class="today_size">${week_changer[i]["date"]}</div>
                 <div class="total_timer">
                     <div class="flex_end">Total : <span class="flex_end_te">${timeElasedInDiv}</span></div>
-                    <img src="	https://app.clockify.me/assets/ui-icons/bulk-edit.svg" alt="">
+                    <img src="https://app.clockify.me/assets/ui-icons/bulk-edit.svg" alt="">
                 </div>
             </div>
- `
+        `;
+
         for (j = 0; j < week_changer[i]["tasks"].length; j++) {
             timeElased += timeElapsed(week_changer[i]["tasks"][j]["elapsed"])
 
-            if (j > 0)
-                header = "";
+            if (j > 0) header = "";
             buildTaskTile(week_changer[i]["tasks"][j], j, header, i);
-            flex_end_te = document.querySelectorAll('.flex_end_te');
         }
 
-        flex_end_te[i].textContent = secondsToHMS(timeElased)
+        flex_end_te = document.querySelectorAll('.flex_end_te');
+        flex_end_te[i].textContent = secondsToHMS(timeElased);
+        week_total_time = addTimes(week_total_time, secondsToHMS(timeElased));
     }
-    const dateInput = document.getElementById('dateInput');
-    let date_input = document.querySelector('.today_size');
+
+    updateWeekTotalTime();
 }
+
+
+function updateWeekTotalTime() {
+    const timer_week = document.querySelector('.timer_week span');
+    timer_week.textContent = week_total_time;
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    initialBuildTask();
+});
+
 
 let week_changer = [];
 
@@ -351,7 +369,6 @@ stop_btn.addEventListener('click', function onclick() {
     clearInterval(time_start);
     week_total_time = addTimes(week_total_time, store_timer);
     timer_week.textContent = week_total_time;
-
 });
 
 
@@ -362,11 +379,6 @@ function check_date_same(cur_date, date2) {
         return date2;
     }
 }
-
-
-
-
-
 
 //format the time
 
@@ -398,10 +410,6 @@ function current_time_diff() {
     return timestamp;
 }
 
-
-
-
-
 function timeDifference(time1, time2) {
     // Parse the input times (assuming HH:mm:ss format)
     const [hours1, minutes1, seconds1] = time1.split(':').map(Number);
@@ -427,18 +435,14 @@ function timeDifference(time1, time2) {
 
     // Format the result as HH:mm:ss
     const result = `${hoursDifference.toString().padStart(2, '0')}:${minutesDifference.toString().padStart(2, '0')}:${secondsDifference.toString().padStart(2, '0')}`;
-
     return result;
 }
 
 function reverseFormatTime(formattedTime) {
     const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
     const totalTimeInSeconds = hours * 3600 + minutes * 60 + seconds;
-
     return totalTimeInSeconds;
 }
-
-
 
 //get input values-->
 
@@ -448,6 +452,7 @@ document.addEventListener('DOMContentLoaded', initialBuildTask);
 
 
 function addTimes(startTime, endTime) {
+    
     var times = [0, 0, 0]
     var max = times.length
     var a = (startTime || '').split(':')
@@ -472,10 +477,8 @@ function addTimes(startTime, endTime) {
         hours += h
         minutes -= 60 * h
     }
-    // week_total_time=('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2);
     return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
 }
-
 
 function add_remove() {
     document.getElementById('myDropdown_add').classList.toggle('show');
@@ -509,6 +512,30 @@ function date_format_to_words(inputDateString) {
     return formattedDate;
 }
 
+function show_buttons(i, j) {
+
+    let dropdown_content_add = document.getElementById(`dropdown_${i}_${j}`);
+    let dropdowns = document.querySelectorAll('.dropdown_content');
+    dropdowns.forEach((dropdown) => {
+        if (dropdown === dropdown_content_add) {
+            dropdown.classList.toggle('showing');
+        } else {
+            dropdown.classList.remove('showing');
+        }
+    });
+}
+
+function onInputChange(event, i, j) {
+    week_changer[i]["tasks"][j]["title"] = event.target.value;
+    updateTitleDisplay(i, j, event.target.value);
+}
+
+function updateTitleDisplay(i, j, newValue) {
+    var titleDisplay = document.getElementById(`titleDisplay_${i}_${j}`);
+    if (titleDisplay) {
+        titleDisplay.innerText = newValue;
+    }
+}
 
 
 
